@@ -26,10 +26,7 @@ const userSchema = new Schema({
     enum: ["user", "admin"],
     default: "user",
   },
-  bookedTickets: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "booking",
-  },
+ 
 
   resetPasswordToken: String,
   resetPasswordExpire: Date,
