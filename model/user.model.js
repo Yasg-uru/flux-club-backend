@@ -26,7 +26,8 @@ const userSchema = new Schema({
     enum: ["user", "admin"],
     default: "user",
   },
- 
+  createdEvents: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+  bookedEvents: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
 
   resetPasswordToken: String,
   resetPasswordExpire: Date,
