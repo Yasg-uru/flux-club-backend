@@ -4,9 +4,11 @@ import {
   isAuthenticated,
 } from "../middleware/auth.middleware.js";
 import {
+  ChangeRole,
   createuser,
   deleteuser,
   forgotpassword,
+  getAllApplications,
   getalluser,
   getdetail,
   getsingleuser,
@@ -40,5 +42,12 @@ router
 router
   .route("/deleteuser/:id")
   .delete(isAuthenticated, authorization("admin"), deleteuser);
+router.get(
+  "/applications",
+  isAuthenticated,
+  authorization("admin"),
+  getAllApplications
+);
+router.put("/change-role", isAuthenticated, authorization("admin"), ChangeRole);
 
 export default router;

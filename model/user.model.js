@@ -23,11 +23,19 @@ const userSchema = new Schema({
 
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin","member"],
     default: "user",
   },
-  createdEvents: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
-  bookedEvents: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+  membersocialLinks: {
+    linkedIn: { type: String },
+    instagram: { type: String },
+    role: { type: String },
+    datejoined: {
+      type: Date,
+    },
+  },
+  createdEvents: [{ type: Schema.Types.ObjectId, ref: "Event" }],
+  bookedEvents: [{ type: Schema.Types.ObjectId, ref: "Event" }],
 
   resetPasswordToken: String,
   resetPasswordExpire: Date,

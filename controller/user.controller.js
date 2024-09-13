@@ -2,30 +2,46 @@ import User from "../model/user.model.js";
 import catchasyncerror from "../middleware/catchasynerror.middleware.js";
 import Errorhandler from "../utils/Errorhandler.utils.js";
 import sendtokenUtil from "../utils/sendtoken.util.js";
-import sendmail from "../utils/sendmail.util.js"
-import uploadcloudianry from "../utils/cloudinary.util.js"
+import sendmail from "../utils/sendmail.util.js";
+import uploadcloudianry from "../utils/cloudinary.util.js";
+import usermodel from "../model/user.model.js";
 export const createuser = catchasyncerror(async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
-    // const cloudinary=await uploadcloudianry(req.file.path);
-    // const profile=cloudinary.secure_url;
+    const { name, email, password, roleWants, instaLink, LinkedInLink } = req.body;
+
+    const cloudinary = await uploadcloudianry(req.file.path);
+    const profile = cloudinary.secure_url;
+
+    let membersocialLinks = {};
+    
+    // Correct the variable names to match req.body
+    if (LinkedInLink || instaLink) {
+      membersocialLinks = {
+        linkedIn: LinkedInLink || undefined,
+        instagram: instaLink || undefined,
+        role: roleWants,
+        datejoined: Date.now(),
+      };
+    }
 
     const user = await User.create({
       name,
       email,
       password,
-      // profile
-      
+      profile,
+      membersocialLinks: Object.keys(membersocialLinks).length ? membersocialLinks : undefined,
     });
+
     sendtokenUtil(200, res, user);
   } catch (error) {
     return next(new Errorhandler(error?.message, 500));
   }
 });
+
 export const login = catchasyncerror(async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log("this is a email and password:",email+"      "+password)
+    console.log("this is a email and password:", email + "      " + password);
     if (!email || !password) {
       return next(new Errorhandler("please Enter correct Email or password"));
     }
@@ -33,8 +49,8 @@ export const login = catchasyncerror(async (req, res, next) => {
     if (!user) {
       return next(new Errorhandler("'please enter correct email or password"));
     }
-    console.log("this is a user in login form :",user)
-    const compare =  await user.comparepassword(password);
+    console.log("this is a user in login form :", user);
+    const compare = await user.comparepassword(password);
     if (!compare) {
       return next(new Errorhandler("please enter correct email or password"));
     }
@@ -53,25 +69,24 @@ export const logout = catchasyncerror(async (req, res, next) => {
     message: "logout successfully",
   });
 });
-export const getdetail=catchasyncerror(async (req,res,next)=>{
-  const user=User.findById(req.user._id);
-  if(!user){
-      return next(new Errorhandler("user not found",404));
-
+export const getdetail = catchasyncerror(async (req, res, next) => {
+  const user = User.findById(req.user._id);
+  if (!user) {
+    return next(new Errorhandler("user not found", 404));
   }
   res.status(200).json({
-      success:true,
-      user
-  })
-})
+    success: true,
+    user,
+  });
+});
 
 export const forgotpassword = catchasyncerror(async (req, res, next) => {
-console.log("this is a email:",req.body.email)
+  console.log("this is a email:", req.body.email);
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new Errorhandler("user not found", 404));
   }
-  const token =await user.getresetpasswordtoken();
+  const token = await user.getresetpasswordtoken();
   await user.save({ validateBeforeSave: false });
 
   const resetPassword = `${req.protocol}://${req.get(
@@ -98,7 +113,7 @@ console.log("this is a email:",req.body.email)
   }
 });
 
- export const resetpassword = catchasyncerror(async (req, res, next) => {
+export const resetpassword = catchasyncerror(async (req, res, next) => {
   // now we have resetpassword token and their time
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -185,7 +200,7 @@ export const updateuserprofile = catchasyncerror(async (req, res, next) => {
 //update particular user
 export const updateuserrole = catchasyncerror(async (req, res, next) => {
   const user = await User.findById(req.params.id);
-  console.log("update role is called"+req.body.role)
+  console.log("update role is called" + req.body.role);
   const newuser = {
     role: req.body.role,
   };
@@ -215,3 +230,35 @@ export const deleteuser = catchasyncerror(async (req, res, next) => {
   });
 });
 
+export const getAllApplications = catchasyncerror(async (req, res, next) => {
+  try {
+    const user = await usermodel.find({ "membersocialLinks.role": "member" });
+    if (user.length === 0) {
+      return next(new Errorhandler(404, "No application found"));
+    }
+    res.status(200).json({
+      message: "Fetched requested member details",
+      user,
+    });
+  } catch (error) {
+    next();
+  }
+});
+export const ChangeRole = catchasyncerror(async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await usermodel.findById(userId);
+    if (!user) {
+      return next(new Errorhandler(404, "user not found"));
+    }
+
+    user.role = "member";
+    await user.save();
+    res.status(200).json({
+      message: "Successfully changed user role to the member",
+      user,
+    });
+  } catch (error) {
+    next();
+  }
+});
