@@ -184,15 +184,13 @@ export const getsingleuser = catchasyncerror(async (req, res, next) => {
 });
 //update user profile
 export const updateuserprofile = catchasyncerror(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+ const userId=req.user?._id;
   const newuser = {
     name: req.body.name,
     email: req.body.email,
   };
-  if (!user) {
-    return next(new Errorhandler("user not found"));
-  }
-  const updateduser = await User.findByIdAndUpdate(req.params.id, newuser, {
+
+  const updateduser = await User.findByIdAndUpdate(userId, newuser, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
