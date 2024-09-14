@@ -48,6 +48,11 @@ router.get(
   authorization("admin"),
   getAllApplications
 );
-router.put("/change-role", isAuthenticated, authorization("admin"), ChangeRole);
+router.put(
+  "/change-role/:userId",
+  isAuthenticated,
+  authorization("admin"),
+  ChangeRole
+);
 
 export default router;
