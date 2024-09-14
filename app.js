@@ -12,7 +12,7 @@ import errorMiddleware from "./middleware/error.middleware.js";
 const app = express();
 app.use(
   cors({
-    origin:"https://clubflux.netlify.app/",
+    origin:"https://clubflux.netlify.app",
     credentials: true,
   })
 );
