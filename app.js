@@ -7,6 +7,7 @@ import userRouter from "./router/user.route.js";
 import eventRouter from "./router/event.route.js";
 
 import bookingRouter from "./router/booking.route.js";
+import errorMiddleware from "./middleware/error.middleware.js";
 
 const app = express();
 app.use(
@@ -22,6 +23,6 @@ app.use(cookieParser());
 app.use("/api/user", userRouter);
 app.use("/api/event", eventRouter);
 app.use("/api/booking", bookingRouter);
-
+app.use(errorMiddleware);
 
 export default app;
