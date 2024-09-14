@@ -21,7 +21,7 @@ import {
 } from "../controller/user.controller.js";
 import upload from "../middleware/multer.middleware.js";
 const router = express.Router();
-router.route("/register").post(upload.single("profile"), createuser);
+router.route("/register").post( createuser);
 router.route("/login").post(login);
 router.route("/logout").post(logout);
 router.route("/me").get(isAuthenticated, getdetail);
