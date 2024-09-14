@@ -26,7 +26,7 @@ export const createuser = catchasyncerror(async (req, res, next) => {
         datejoined: Date.now(),
       };
     }
-    let salt=10;
+    let salt = 10;
     hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
       name,

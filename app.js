@@ -4,8 +4,9 @@ import bodyParser from "body-parser";
 import cors from "cors";
 
 import userRouter from "./router/user.route.js";
-import eventRouter from "./router/event.route.js"
-import bookinRouter from "./router/booking.route.js"
+import eventRouter from "./router/event.route.js";
+
+import bookingRouter from "./router/booking.route.js";
 
 const app = express();
 app.use(
@@ -20,7 +21,7 @@ app.use(cookieParser());
 
 app.use("/api/user", userRouter);
 app.use("/api/event", eventRouter);
-app.use("/api/booking", eventRouter);
+app.use("/api/booking", bookingRouter);
 
 
 export default app;
