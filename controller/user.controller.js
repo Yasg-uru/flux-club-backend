@@ -3,16 +3,17 @@ import catchasyncerror from "../middleware/catchasynerror.middleware.js";
 import Errorhandler from "../utils/Errorhandler.utils.js";
 import sendtokenUtil from "../utils/sendtoken.util.js";
 import sendmail from "../utils/sendmail.util.js";
+import bcrypt from "bcrypt";
 import uploadcloudianry from "../utils/cloudinary.util.js";
 import usermodel from "../model/user.model.js";
 export const createuser = catchasyncerror(async (req, res, next) => {
   try {
     const { name, email, password, roleWants, instaLink, LinkedInLink } =
       req.body;
-let profile="";
+    let profile = "";
     if (req.file && req.file.path) {
       const cloudinary = await uploadcloudianry(req.file.path);
-      profile= cloudinary.secure_url;
+      profile = cloudinary.secure_url;
     }
     let membersocialLinks = {};
 
@@ -25,11 +26,12 @@ let profile="";
         datejoined: Date.now(),
       };
     }
-
+    let salt=10;
+    hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword,
       profile,
       membersocialLinks: Object.keys(membersocialLinks).length
         ? membersocialLinks

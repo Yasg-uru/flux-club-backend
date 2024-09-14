@@ -23,7 +23,7 @@ const userSchema = new Schema({
 
   role: {
     type: String,
-    enum: ["user", "admin","member"],
+    enum: ["user", "admin", "member"],
     default: "user",
   },
   membersocialLinks: {
@@ -40,13 +40,13 @@ const userSchema = new Schema({
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
-  this.password = await bcrypt.hash(this.password, 10);
-  return next();
-});
+// userSchema.pre("save", async function (next) {
+//   if (!this.isModified("password")) {
+//     return next();
+//   }
+//   this.password = await bcrypt.hash(this.password, 10);
+//   return next();
+// });
 userSchema.methods.getjwttoken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
