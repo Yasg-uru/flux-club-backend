@@ -9,10 +9,11 @@ export const createuser = catchasyncerror(async (req, res, next) => {
   try {
     const { name, email, password, roleWants, instaLink, LinkedInLink } =
       req.body;
-
-    const cloudinary = await uploadcloudianry(req.file.path);
-    const profile = cloudinary.secure_url;
-
+let profile="";
+    if (req.file && req.file.path) {
+      const cloudinary = await uploadcloudianry(req.file.path);
+      profile= cloudinary.secure_url;
+    }
     let membersocialLinks = {};
 
     // Correct the variable names to match req.body
