@@ -1,19 +1,16 @@
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
 import multer from "multer";
+import { dirname, join } from "path";
+// import { fileURLToPath } from "url";
+import { cwd } from "process";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+// const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/tmp");
+    cb(null, join(__dirname, "temporary/"));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
-
-const upload = multer({ storage: storage });
-
+const upload = multer({ storage });
 export default upload;
