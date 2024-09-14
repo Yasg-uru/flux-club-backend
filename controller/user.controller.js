@@ -7,13 +7,14 @@ import uploadcloudianry from "../utils/cloudinary.util.js";
 import usermodel from "../model/user.model.js";
 export const createuser = catchasyncerror(async (req, res, next) => {
   try {
-    const { name, email, password, roleWants, instaLink, LinkedInLink } = req.body;
+    const { name, email, password, roleWants, instaLink, LinkedInLink } =
+      req.body;
 
     const cloudinary = await uploadcloudianry(req.file.path);
     const profile = cloudinary.secure_url;
 
     let membersocialLinks = {};
-    
+
     // Correct the variable names to match req.body
     if (LinkedInLink || instaLink) {
       membersocialLinks = {
@@ -29,7 +30,9 @@ export const createuser = catchasyncerror(async (req, res, next) => {
       email,
       password,
       profile,
-      membersocialLinks: Object.keys(membersocialLinks).length ? membersocialLinks : undefined,
+      membersocialLinks: Object.keys(membersocialLinks).length
+        ? membersocialLinks
+        : undefined,
     });
 
     sendtokenUtil(200, res, user);
@@ -233,9 +236,7 @@ export const deleteuser = catchasyncerror(async (req, res, next) => {
 export const getAllApplications = catchasyncerror(async (req, res, next) => {
   try {
     const user = await usermodel.find({ "membersocialLinks.role": "member" });
-    if (user.length === 0) {
-      return next(new Errorhandler(404, "No application found"));
-    }
+
     res.status(200).json({
       message: "Fetched requested member details",
       user,
